@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+		<meta charset="utf-8">
+		<title>Circles</title>
+		<style>
+	  		html, body {
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+	  		#map {
+				height: 100%;
+	  		}
+	</style>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script>
+
+		var cells = ${cells}
+
+		function initMap() {
+			var map = new google.maps.Map(document.getElementById('map'), {
+				mapTypeControl: true,
+		 		mapTypeControlOptions: {
+					mapTypeIds: ['roadmap', 'satellite', 'hybrid', 'terrain']
+		  		},
+				mapTypeId: 'hybrid'
+			});
+
+			marker = new google.maps.Marker({
+				position: ${marker},
+				map: map
+			})
+
+			var opmul = 0.25/cells.length
+			for (var i in cells) {
+				var cell_circle =  new google.maps.Circle({
+					strokeColor: i == 0 ? 'yellow' : 'red',
+					strokeOpacity: 0.8,
+					strokeWeight: 2,
+					fillColor: i == 0 ? 'lime' : 'red',
+					fillOpacity: (cells.length - i) * opmul,
+					map: map,
+					center: cells[i].location,
+					radius: cells[i].accuracy
+				})
+				if (i == 0) {
+					map.fitBounds(cell_circle.getBounds())
+				}
+			}
+
+			var flight_cords = ${flight}
+
+			var flight_path = new google.maps.Polyline({
+				path: flight_cords,
+				strokeColor: 'blue',
+				strokeOpacity: 0.4,
+				strokeWeight: 4
+			});
+
+			flight_path.setMap(map);
+
+		}
+		</script>
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=${google_api_key}&signed_in=true&callback=initMap">
+		</script>
+	</body>
+</html>
